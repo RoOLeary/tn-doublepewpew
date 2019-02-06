@@ -86,6 +86,7 @@
 
                     // To make player flash when they are hit, set player.spite.alpha = 0
                     if(this.sprite.alpha < 1){
+                        console.log('Fuck, I\'m hit');
                         this.sprite.alpha += (1 - this.sprite.alpha) * 0.16;
                     } else {
                         this.sprite.alpha = 1;
@@ -105,6 +106,10 @@
                 var sprite = game.add.sprite(x,y,'ship' + String(type) + '_1');
                 sprite.rotation = angle;
                 sprite.anchor.setTo(0.5,0.5);
+
+
+
+                
                 return sprite;
             }
 
