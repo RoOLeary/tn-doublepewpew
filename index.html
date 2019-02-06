@@ -12,7 +12,10 @@
             body,html { /* Remove margins */
                 margin: 0px;
                 position: relative;
-                background-color:#9FC7E1; 
+                background-color:#000;
+                display: flex; 
+                justify-content: center;
+                align-content: center; 
             }
             canvas { /* Center the canvas */
                 margin:auto;
@@ -21,6 +24,8 @@
         </style>
     </head>
     <body>
+        <h1 style="color: #fff;">TANKS</h1>
+        <br>
         <script type="text/javascript">
             var ASSET_URL = "assets/"
             //We first initialize the phaser game object
@@ -31,7 +36,7 @@
             var WORLD_SIZE = {w:750,h:500};
           
 
-            var water_tiles = [];
+            var ground_tiles = [];
             var bullet_array = [];
           
             var socket; //Declare it in this scope, initialize in the `create` function
@@ -86,8 +91,10 @@
 
                     // To make player flash when they are hit, set player.spite.alpha = 0
                     if(this.sprite.alpha < 1){
-                        console.log('Fuck, I\'m hit');
+                        
                         this.sprite.alpha += (1 - this.sprite.alpha) * 0.16;
+                        player.lives = this.player.lives - 1;
+                        console.log(player.lives);
                     } else {
                         this.sprite.alpha = 1;
                     }
@@ -103,12 +110,11 @@
             function CreateShip(type,x,y,angle){
                 // type is an int that can be between 1 and 6 inclusive 
                 // returns the sprite just created 
-                var sprite = game.add.sprite(x,y,'ship' + String(type) + '_1');
+                var sprite = game.add.sprite(x,y,'tank' + String(type));
                 sprite.rotation = angle;
                 sprite.anchor.setTo(0.5,0.5);
-
-
-
+                sprite.collideWorldBounds = true;
+            
                 
                 return sprite;
             }
@@ -120,14 +126,14 @@
 
                 // Load all the ships
                 for(var i=1;i<=6;i++){
-                    game.load.image('ship'+String(i) +'_1', ASSET_URL + 'ship'+String(i)+'_1.png');
-                    game.load.image('ship'+String(i) +'_2', ASSET_URL + 'ship'+String(i)+'_2.png');
-                    game.load.image('ship'+String(i) +'_3', ASSET_URL + 'ship'+String(i)+'_3.png');
-                    game.load.image('ship'+String(i) +'_4', ASSET_URL + 'ship'+String(i)+'_4.png');
+                    game.load.image('tank1', ASSET_URL + 'tanks/tank1.png');
+                    game.load.image('tank2', ASSET_URL + 'tanks/tank2.png');
+                    game.load.image('tank3', ASSET_URL + 'tanks/tank3.png');
+                    game.load.image('tank4', ASSET_URL + 'tanks/tank4.png');
                 }
                 
                 game.load.image('bullet', ASSET_URL + 'cannon_ball.png');
-                game.load.image('water', ASSET_URL + 'water_tile.png');
+                game.load.image('water', ASSET_URL + 'tanks/light_grass.png');
             }
 
             function create(){
@@ -137,7 +143,7 @@
                         var tile_sprite = game.add.sprite(i * 64, j * 64, 'water');
                         tile_sprite.anchor.setTo(0.5,0.5);
                         tile_sprite.alpha = 0.5;
-                        water_tiles.push(tile_sprite);
+                        ground_tiles.push(tile_sprite);
                     }
                 }
 
@@ -145,7 +151,7 @@
 
                 // Create player
                 var player_ship_type = String(1);
-                player.sprite = game.add.sprite(Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,'ship'+player_ship_type+'_1');
+                player.sprite = game.add.sprite(Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,'tank'+player_ship_type+'_1');
                 player.sprite.anchor.setTo(0.5,0.5);
                
 
@@ -166,7 +172,7 @@
                             var data = players_data[id];
                             var p = CreateShip(data.type,data.x,data.y,data.angle);
                             other_players[id] = p;
-                            console.log("Created new player at (" + data.x + ", " + data.y + ")");
+                            console.log(id + " joined at (" + data.x + ", " + data.y + ")");
                         }
                         players_found[id] = true;
                         
