@@ -54,7 +54,7 @@
             var score = 0;
             var scoreText = "Score text";
 
-            //  var healthBar = null;
+            var healthBar = null;
           
             var hits_objects = [];
 
@@ -260,7 +260,7 @@
                         player.sprite.tint = 0xff0000;
 
                         player.lives--;
-                        //healthBar.setPercent(player.lives * 10);                            
+                        healthBar.setPercent(player.lives * 10);                            
 
                         if (player.lives < 1) {
                             kill();
