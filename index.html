@@ -251,7 +251,9 @@
                         // Find the right player 
                         other_players[obj.id].alpha = 0;
                         other_players[obj.id].tint = 0xff0000;
-                        score += 100;
+                        if (obj.ownerId === socket.id) {
+                          score += 100;
+                        }
                         scoreText.setText('Score: ' + score);                        
                     }
                 })
