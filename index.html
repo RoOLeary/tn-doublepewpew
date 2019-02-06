@@ -41,7 +41,12 @@
           
             var socket; //Declare it in this scope, initialize in the `create` function
             var other_players = {};
+
+            var score = 0;
+            var scoreText = "Score text";
           
+            var hits_objects = [];
+
             var player = {
                 sprite:null,//Will hold the sprite when it's created 
                 speed_x:0,// This is the speed it's currently moving at
@@ -146,6 +151,9 @@
                     }
                 }
 
+                // score text create
+                scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+
                 game.stage.disableVisibilityChange = true;
 
                 // Create player
@@ -218,13 +226,20 @@
                 })
               
                 // Listen for any player hit events and make that player flash 
-                socket.on('player-hit',function(id){
-                    if(id == socket.id){
+                socket.on('player-hit',function(obj){
+                    var isOld = hits_objects.findIndex(_obj => _obj.id === obj.id && _obj.bulletId === obj.bulletId) !== -1;
+                    if (isOld) {
+                        return;
+                    }
+                    hits_objects.push(obj);
+                    if(obj.id == socket.id){
                         //If this is you
                         player.sprite.alpha = 0;
                     } else {
                         // Find the right player 
-                        other_players[id].alpha = 0;
+                        other_players[obj.id].alpha = 0;
+                        score += 100;
+                        scoreText.setText('Score: ' + score);                        
                     }
                 })
 
