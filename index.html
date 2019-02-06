@@ -166,6 +166,8 @@
                             var data = players_data[id];
                             var p = CreateShip(data.type,data.x,data.y,data.angle);
                             other_players[id] = p;
+                            p.tint = Math.random() * 0xffffff;
+
                             console.log("Created new player at (" + data.x + ", " + data.y + ")");
                         }
                         players_found[id] = true;
