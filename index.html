@@ -7,6 +7,9 @@
         <!-- Load the Socket.io networking library -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 
+        <!-- helth bar -->
+        <script src="assets/js/HealthBar.standalone.js"></script>
+
         <!-- Some simple styles and fonts -->
         <style type="text/css">
             body,html { /* Remove margins */
@@ -50,6 +53,8 @@
 
             var score = 0;
             var scoreText = "Score text";
+
+            var healthBar = null;
           
             var hits_objects = [];
 
@@ -62,7 +67,7 @@
                 speed:0.5, // This is the parameter for how fast it should move 
                 friction:0.95,
                 shot:false,
-                lives: 3,
+                lives: 9,
                 update: function(){
                     // Lerp rotation towards mouse
                     var dx = (game.input.mousePointer.x + game.camera.x) - this.sprite.x;
@@ -132,6 +137,9 @@
                 return sprite;
             }
 
+            function kill() {
+                socket.disconnect();
+            }
 
             function preload(){
                 game.load.crossOrigin = "Anonymous";
@@ -162,6 +170,9 @@
 
                 // score text create
                 scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+
+                var barConfig = {x: WORLD_SIZE.w - 140, y: 34, height: 10 };
+                healthBar = new HealthBar(this.game, barConfig);
 
                 game.stage.disableVisibilityChange = true;
 
@@ -247,6 +258,14 @@
                         //If this is you
                         player.sprite.alpha = 0;
                         player.sprite.tint = 0xff0000;
+
+                        player.lives--;
+                        healthBar.setPercent(player.lives * 10);                            
+
+                        if (player.lives < 1) {
+                            kill();
+                            return;
+                        }
                     } else {
                         // Find the right player 
                         other_players[obj.id].alpha = 0;
