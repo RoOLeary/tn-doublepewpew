@@ -73,6 +73,7 @@ function ServerGameLoop(){
         var dist = Math.sqrt(dx * dx + dy * dy);
         if(dist < 70){
           io.emit('player-hit',id); // Tell everyone this player got hit
+          players.lives = player.lives - 1;
         }
       }
     }
