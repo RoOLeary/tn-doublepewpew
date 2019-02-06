@@ -3,6 +3,8 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http); // Here's where we include socket.io as a node module 
 
+var bulletIdIncrement = 0;
+
 // Serve the index page 
 app.get("/", function (request, response) {
   response.sendFile(__dirname + '/index.html'); 
@@ -49,6 +51,7 @@ io.on('connection', function(socket){
   socket.on('shoot-bullet',function(data){
     if(players[socket.id] == undefined) return;
     var new_bullet = data;
+    new_bullet.id = ++bulletIdIncrement;
     data.owner_id = socket.id; // Attach id of the player to the bullet 
     if(Math.abs(data.speed_x) > 20 || Math.abs(data.speed_y) > 20){
       console.log("Player",socket.id,"is cheating!");
@@ -72,7 +75,7 @@ function ServerGameLoop(){
         var dy = players[id].y - bullet.y;
         var dist = Math.sqrt(dx * dx + dy * dy);
         if(dist < 70){
-          io.emit('player-hit',id); // Tell everyone this player got hit
+          io.emit('player-hit', {id: id, bulletId: bullet.id}); // Tell everyone this player got hit
         }
       }
     }
